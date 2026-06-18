@@ -28,16 +28,14 @@
 html{scroll-behavior:smooth}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--tx);
   min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;
-  cursor:none!important;transition:background .3s,color .3s}
-*{cursor:none!important}
+  transition:background .3s,color .3s}
 
-#cursor{position:fixed;width:11px;height:11px;background:#FFD600;border-radius:50%;
-  pointer-events:none;z-index:99999;transform:translate(-50%,-50%);
-  box-shadow:0 0 10px #FFD600,0 0 20px rgba(255,214,0,.4);transition:width .2s,height .2s}
-#cursor.hover{width:24px;height:24px;background:rgba(255,214,0,.15);box-shadow:0 0 18px #FFD600;border:1.5px solid #FFD600}
-#cursor-trail{position:fixed;width:24px;height:24px;border:1.5px solid rgba(255,214,0,.3);
-  border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);
-  transition:left .12s ease,top .12s ease}
+/* Cursor amarelo via SVG inline — não bloqueia cliques */
+body{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Ccircle cx='10' cy='10' r='6' fill='%23FFD600' opacity='.95'/%3E%3Ccircle cx='10' cy='10' r='9' fill='none' stroke='%23FFD600' stroke-width='1.2' opacity='.4'/%3E%3C/svg%3E") 10 10, auto}
+button,select,a,[onclick]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='8' fill='%23FFD600' opacity='.2'/%3E%3Ccircle cx='12' cy='12' r='5' fill='%23FFD600'/%3E%3Ccircle cx='12' cy='12' r='11' fill='none' stroke='%23FFD600' stroke-width='1.5' opacity='.5'/%3E%3C/svg%3E") 12 12, pointer}
+
+#cursor{display:none}
+#cursor-trail{display:none}
 .spark{position:fixed;pointer-events:none;z-index:99997;border-radius:50%;animation:spark-out .6s ease forwards}
 @keyframes spark-out{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(var(--sx),var(--sy)) scale(0)}}
 
@@ -337,7 +335,6 @@ select:hover,select:focus{border-color:#FFD600;box-shadow:0 0 0 3px var(--yd)}
   .kg{grid-template-columns:repeat(2,1fr)}
   .wrap{padding:12px 14px 30px}.hdr{padding:0 16px;height:58px}
   .clock-c,.badge{display:none}.hero::after{display:none}
-  body,*{cursor:auto!important}#cursor,#cursor-trail{display:none}
 }
 </style>
 </head>
@@ -503,22 +500,11 @@ select:hover,select:focus{border-color:#FFD600;box-shadow:0 0 0 3px var(--yd)}
 <!-- SCRIPT -->
 <script>
 // ══════ CONFIG ══════
-let SHEET_URL = localStorage.getItem('rematricula_sheet_url') || '';
+const DEFAULT_SHEET = 'https://docs.google.com/spreadsheets/d/1oadO6z0fb3XPaDCGchBgNz3y8oh8Z1e_HZMLdDSYKNg/export?format=csv&gid=0';
+let SHEET_URL = localStorage.getItem('rematricula_sheet_url') || DEFAULT_SHEET;
 
 let rawRows = [], charts = {}, isDark = true;
 let _toastCount = 0;
-
-// ══════ CURSOR ══════
-(()=>{
-  const cur = document.getElementById('cursor'), trail = document.getElementById('cursor-trail');
-  let tx=0,ty=0,cx=0,cy=0;
-  document.addEventListener('mousemove', e=>{ cx=e.clientX; cy=e.clientY; cur.style.left=cx+'px'; cur.style.top=cy+'px'; });
-  (function a(){ tx+=(cx-tx)*.18; ty+=(cy-ty)*.18; trail.style.left=tx+'px'; trail.style.top=ty+'px'; requestAnimationFrame(a); })();
-  document.addEventListener('mouseover', e=>{ if(e.target.closest('button,select,.kpi,a,.card-exp,.exp-card,.mrow')) cur.classList.add('hover'); });
-  document.addEventListener('mouseout', e=>{ if(e.target.closest('button,select,.kpi,a,.card-exp,.exp-card,.mrow')) cur.classList.remove('hover'); });
-  document.addEventListener('mousedown', ()=>cur.classList.add('click'));
-  document.addEventListener('mouseup', ()=>cur.classList.remove('click'));
-})();
 
 // ══════ SPARKS ══════
 document.addEventListener('click', e=>{
@@ -1096,7 +1082,8 @@ function showContent(){ hideLoading(); document.getElementById('content').style.
 
 // ══════ BOOT ══════
 window.addEventListener('load', ()=>{
-  if(SHEET_URL) fetchData();
+  // Tem URL padrão hardcoded — sempre carrega
+  fetchData();
 });
 </script>
 </body>
