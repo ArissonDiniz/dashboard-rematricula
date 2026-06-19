@@ -134,8 +134,8 @@ select:hover,select:focus{border-color:var(--y);box-shadow:0 0 0 3px var(--yd)}
 .kpi:hover{transform:translateY(-5px);border-color:rgba(255,214,0,.25);
   box-shadow:0 16px 48px rgba(0,0,0,.25),0 0 0 1px rgba(255,214,0,.08)}
 .kpi:hover::before{opacity:1}
-.kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:11px}
-.kpi-ic{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;letter-spacing:-.5px}
+.kpi-top{display:flex;align-items:flex-start;justify-content:flex-end;margin-bottom:6px}
+.kpi-ic{display:none}
 .kpi-det{font-size:8px;color:var(--kpi-det-c);font-weight:600;letter-spacing:.3px;
   background:var(--kpi-det-bg);padding:3px 7px;border-radius:4px;border:1px solid var(--br);
   transition:all .2s;white-space:nowrap;font-family:'Inter',sans-serif;line-height:1.4}
@@ -392,7 +392,7 @@ select:hover,select:focus{border-color:var(--y);box-shadow:0 0 0 3px var(--yd)}
     <div class="card">
       <button class="card-exp" onclick="expandChart('ch-polo','Resposta por polo','polo')">Expandir</button>
       <div class="ct"><div class="ctd"></div>Confirmacoes vs recusas por polo</div>
-      <div style="position:relative;height:280px"><canvas id="ch-polo"></canvas></div>
+      <div style="position:relative;height:320px"><canvas id="ch-polo"></canvas></div>
     </div>
     <div class="card">
       <button class="card-exp" onclick="expandChart('ch-resp','Distribuicao de respostas','resp')">Expandir</button>
@@ -427,13 +427,6 @@ select:hover,select:focus{border-color:var(--y);box-shadow:0 0 0 3px var(--yd)}
       <div class="leg-inline" id="vet-legend"></div>
       <div style="position:relative;height:175px"><canvas id="ch-vet"></canvas></div>
     </div>
-  </div>
-
-  <!-- COMPARATIVO CALOURO VS VETERANO -->
-  <div class="sh"><div class="st"><div class="st-dot"></div>Comparativo por polo · Calouro vs Veterano</div><div class="sl"></div></div>
-  <div class="card" style="margin-bottom:13px">
-    <div class="ct"><div class="ctd"></div>Taxa de confirmacao por tipo de aluno em cada polo</div>
-    <div class="tw"><table class="comp-table" id="comp-table"></table></div>
   </div>
 
   <!-- RANKING DE POLOS -->
@@ -614,7 +607,7 @@ function renderAll(){
   renderDonutChart(rows,'',  'ch-tipo','tipo-legend','tipo');
   renderDonutChart(rows,'Calouro','ch-calouro','calouro-legend','calouro');
   renderDonutChart(rows,'Veterano','ch-vet','vet-legend','vet');
-  renderCompTable(data);renderTable(data);
+  renderTable(data);
 }
 
 // HERO
@@ -650,7 +643,7 @@ function renderKPIs(rows,data){
 
   function mkKPI(k,i){
     return '<div class="kpi '+k.c+'" style="animation-delay:'+(i*0.05)+'s" data-mid="'+k.mid+'" data-ml="'+k.ml+'" data-col="'+k.col+'">'
-      +'<div class="kpi-top"><div class="kpi-ic">'+k.ic+'</div><span class="kpi-det">detalhes</span></div>'
+      +'<div class="kpi-top"><div></div><span class="kpi-det">detalhes</span></div>'
       +'<div class="kpi-l">'+k.l+'</div>'
       +'<div class="kpi-v">'+k.v+'</div>'
       +'<div class="kpi-s">'+k.s+'</div>'
@@ -778,31 +771,34 @@ function TC(){return isDark?'#3e4250':'#9ca3af';}
 function GC(){return isDark?'rgba(255,255,255,.04)':'rgba(0,0,0,.06)';}
 function BC(){return isDark?'#111318':'#ffffff';}
 
-// CHART: POLO (barras horizontais agrupadas)
+// CHART: POLO (barras verticais agrupadas)
 function renderPoloChart(data){
-  var labels=data.filter(function(d){return d.total>0;}).map(function(d){return d.polo;});
-  var simD=data.filter(function(d){return d.total>0;}).map(function(d){return d.sim;});
-  var naoD=data.filter(function(d){return d.total>0;}).map(function(d){return d.nao;});
-  var decD=data.filter(function(d){return d.total>0;}).map(function(d){return d.decidir;});
-  var nrD=data.filter(function(d){return d.total>0;}).map(function(d){return d.naoResp;});
+  var f=data.filter(function(d){return d.total>0;});
+  var labels=f.map(function(d){
+    // Encurtar labels para caber no eixo X
+    return d.polo.replace('Rio Branco/AC - ','RB/AC - ').replace('Porto Velho/RO - Distrito de Extrema','PVH - Extrema').replace('São Miguel do Guaporé/RO','S. Miguel/RO');
+  });
   if(charts.polo)charts.polo.destroy();
   charts.polo=new Chart(document.getElementById('ch-polo'),{
     type:'bar',
     data:{
       labels:labels,
       datasets:[
-        {label:'Sim',data:simD,backgroundColor:'#22c55e99',borderColor:'#22c55e',borderWidth:1,borderRadius:3,maxBarThickness:12},
-        {label:'Nao',data:naoD,backgroundColor:'#ef444499',borderColor:'#ef4444',borderWidth:1,borderRadius:3,maxBarThickness:12},
-        {label:'Decidir depois',data:decD,backgroundColor:'#06b6d499',borderColor:'#06b6d4',borderWidth:1,borderRadius:3,maxBarThickness:12},
-        {label:'Sem resposta',data:nrD,backgroundColor:'rgba(62,66,80,.5)',borderColor:'#3e4250',borderWidth:1,borderRadius:3,maxBarThickness:12},
+        {label:'Sim',data:f.map(function(d){return d.sim;}),backgroundColor:'#22c55ecc',borderColor:'#22c55e',borderWidth:1,borderRadius:4,maxBarThickness:22},
+        {label:'Nao',data:f.map(function(d){return d.nao;}),backgroundColor:'#ef4444cc',borderColor:'#ef4444',borderWidth:1,borderRadius:4,maxBarThickness:22},
+        {label:'Decidir depois',data:f.map(function(d){return d.decidir;}),backgroundColor:'#06b6d4cc',borderColor:'#06b6d4',borderWidth:1,borderRadius:4,maxBarThickness:22},
+        {label:'Sem resposta',data:f.map(function(d){return d.naoResp;}),backgroundColor:'rgba(62,66,80,.55)',borderColor:'#4b5060',borderWidth:1,borderRadius:4,maxBarThickness:22},
       ]
     },
     options:{
-      indexAxis:'y',responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:true,position:'bottom',labels:{color:TC(),font:{family:'Inter',size:10},boxWidth:10,padding:12}},tooltip:TO()},
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:true,position:'bottom',labels:{color:TC(),font:{family:'Inter',size:10},boxWidth:10,padding:14}},
+        tooltip:TO()
+      },
       scales:{
-        x:{ticks:{color:TC(),font:{size:10}},grid:{color:GC()},beginAtZero:true},
-        y:{ticks:{color:TC(),font:{size:10,family:'Inter'}},grid:{display:false}}
+        x:{ticks:{color:TC(),font:{size:9.5,family:'Inter'}},grid:{display:false}},
+        y:{ticks:{color:TC(),font:{size:10}},grid:{color:GC()},beginAtZero:true}
       }
     }
   });
@@ -838,7 +834,7 @@ function buildTipoData(rows){
   var c=cnt(rows,function(r){return (r['TIPO_ALUNO']||'').trim()==='Calouro';});
   var v=cnt(rows,function(r){return (r['TIPO_ALUNO']||'').trim()==='Veterano';});
   var w=cnt(rows,function(r){return (r['TIPO_ALUNO']||'').trim()==='Winback';});
-  return{total:rows.length,vals:[c,v,w],lbls:['Calouro','Veterano','Winback'],clrs:['#3b82f6','#a855f7','#f97316']};
+  return{total:rows.length,vals:[c,v,w],lbls:['Calouro','Veterano','Winback'],clrs:['#FFD600','#e879f9','#22d3ee']};
 }
 
 function renderLegend(id,dd,tot){
@@ -968,16 +964,19 @@ function expandChart(canvasId,titulo,key){
 }
 function buildPoloExpand(data){
   var f=data.filter(function(d){return d.total>0;});
-  return{type:'bar',data:{labels:f.map(function(d){return d.polo;}),
+  var labels=f.map(function(d){
+    return d.polo.replace('Rio Branco/AC - ','RB/AC - ').replace('Porto Velho/RO - Distrito de Extrema','PVH - Extrema').replace('São Miguel do Guaporé/RO','S. Miguel/RO');
+  });
+  return{type:'bar',data:{labels:labels,
     datasets:[
-      {label:'Sim',data:f.map(function(d){return d.sim;}),backgroundColor:'#22c55e99',borderColor:'#22c55e',borderWidth:1,borderRadius:3,maxBarThickness:18},
-      {label:'Nao',data:f.map(function(d){return d.nao;}),backgroundColor:'#ef444499',borderColor:'#ef4444',borderWidth:1,borderRadius:3,maxBarThickness:18},
-      {label:'Decidir depois',data:f.map(function(d){return d.decidir;}),backgroundColor:'#06b6d499',borderColor:'#06b6d4',borderWidth:1,borderRadius:3,maxBarThickness:18},
-      {label:'Sem resposta',data:f.map(function(d){return d.naoResp;}),backgroundColor:'rgba(62,66,80,.5)',borderColor:'#3e4250',borderWidth:1,borderRadius:3,maxBarThickness:18},
+      {label:'Sim',data:f.map(function(d){return d.sim;}),backgroundColor:'#22c55ecc',borderColor:'#22c55e',borderWidth:1,borderRadius:5,maxBarThickness:28},
+      {label:'Nao',data:f.map(function(d){return d.nao;}),backgroundColor:'#ef4444cc',borderColor:'#ef4444',borderWidth:1,borderRadius:5,maxBarThickness:28},
+      {label:'Decidir depois',data:f.map(function(d){return d.decidir;}),backgroundColor:'#06b6d4cc',borderColor:'#06b6d4',borderWidth:1,borderRadius:5,maxBarThickness:28},
+      {label:'Sem resposta',data:f.map(function(d){return d.naoResp;}),backgroundColor:'rgba(62,66,80,.55)',borderColor:'#4b5060',borderWidth:1,borderRadius:5,maxBarThickness:28},
     ]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+    options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:true,position:'bottom',labels:{color:TC(),font:{family:'Inter',size:12},boxWidth:12,padding:14}},tooltip:TO()},
-      scales:{x:{ticks:{color:TC(),font:{size:12}},grid:{color:GC()},beginAtZero:true},y:{ticks:{color:TC(),font:{size:12,family:'Inter'}},grid:{display:false}}}}};
+      scales:{x:{ticks:{color:TC(),font:{size:11,family:'Inter'}},grid:{display:false}},y:{ticks:{color:TC(),font:{size:11}},grid:{color:GC()},beginAtZero:true}}}};
 }
 
 function closeModal(){
