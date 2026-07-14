@@ -570,9 +570,20 @@ function normTipo(s){
 function parseDataConf(s){
   var v=(s||'').trim();
   if(!v)return null;
-  var m=v.match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if(!m)return null;
-  return new Date(parseInt(m[1],10),parseInt(m[2],10)-1,parseInt(m[3],10));
+  // ISO: YYYY-M-D ou YYYY-MM-DD (com ou sem zero a esquerda, com ou sem hora)
+  var m=v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m)return new Date(parseInt(m[1],10),parseInt(m[2],10)-1,parseInt(m[3],10));
+  // BR: D/M/YYYY ou DD/MM/YYYY (com ou sem hora)
+  m=v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(m)return new Date(parseInt(m[3],10),parseInt(m[2],10)-1,parseInt(m[1],10));
+  // Numero serial do Google Sheets (dias desde 30/12/1899)
+  if(/^\d+(\.\d+)?$/.test(v)){
+    var serial=parseFloat(v);
+    var epoch=Date.UTC(1899,11,30);
+    var dd=new Date(epoch+serial*86400000);
+    return new Date(dd.getUTCFullYear(),dd.getUTCMonth(),dd.getUTCDate());
+  }
+  return null;
 }
 function fmtDateBR(d){
   if(!d)return'';
@@ -743,9 +754,6 @@ function renderKPIs(rows,data){
     {l:'Calouros',v:cal,s:total>0?Math.round(cal/total*100)+'% da selecao':'—',c:'kb',b:total>0?Math.round(cal/total*100):0,mid:'calouros',ml:'Calouros por polo',col:'#3b82f6'},
     {l:'Veteranos',v:vet,s:total>0?Math.round(vet/total*100)+'% da selecao':'—',c:'ko',b:total>0?Math.round(vet/total*100):0,mid:'veteranos',ml:'Veteranos por polo',col:'#f97316'},
     {l:'Winback',v:wb,s:'alunos que retornaram',c:'kt',b:null,mid:'winback',ml:'Winback por polo',col:'#06b6d4'},
-    {l:'Confirmaram hoje',v:hoje,s:'no filtro atual',c:'kg2c',b:null,mid:'hoje',ml:'Confirmaram hoje por polo',col:'#22c55e'},
-    {l:'Confirmaram na semana',v:semana,s:'desde segunda-feira',c:'kt',b:null,mid:'semana',ml:'Confirmaram na semana por polo',col:'#06b6d4'},
-    {l:'Confirmaram no mes',v:mes,s:'desde o dia 1',c:'ky',b:null,mid:'mes',ml:'Confirmaram no mes por polo',col:'#FFD600'},
   ].map(function(k,i){return mkKPI(k,i);}).join('');
 }
 
