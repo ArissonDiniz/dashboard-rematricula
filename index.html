@@ -33,7 +33,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;
   transition:background .3s,color .3s;
   cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Cpath d='M4 3 L4 17 L7.5 13.5 L10 19 L12 18 L9.5 12.5 L15 12.5 Z' fill='%23FFD600' stroke='%23000' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/svg%3E") 4 3, default}
-button,select,a,[onclick]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Cpath d='M4 3 L4 17 L7.5 13.5 L10 19 L12 18 L9.5 12.5 L15 12.5 Z' fill='%23FFD600' stroke='%23000' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/svg%3E") 4 3, pointer}
+button,select,a,[onclick],input[type=date]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Cpath d='M4 3 L4 17 L7.5 13.5 L10 19 L12 18 L9.5 12.5 L15 12.5 Z' fill='%23FFD600' stroke='%23000' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/svg%3E") 4 3, pointer}
 
 .spark{position:fixed;pointer-events:none;z-index:99997;border-radius:50%;animation:spark-out .6s ease forwards}
 @keyframes spark-out{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(var(--sx),var(--sy)) scale(0)}}
@@ -116,12 +116,14 @@ button,select,a,[onclick]{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://ww
   animation:fsi .45s .1s cubic-bezier(.2,.8,.2,1) both}
 .fl{font-size:9.5px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap}
 .divv{width:1px;height:24px;background:var(--br2);flex-shrink:0}
-select{background:var(--b4);border:1px solid var(--br2);color:var(--tx);
+select,.dinput{background:var(--b4);border:1px solid var(--br2);color:var(--tx);
   padding:7px 11px;border-radius:9px;font-size:12px;font-family:'Inter',sans-serif;
-  outline:none;transition:border-color .2s,box-shadow .2s;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+  outline:none;transition:border-color .2s,box-shadow .2s}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;appearance:none}
-select:hover,select:focus{border-color:var(--y);box-shadow:0 0 0 3px var(--yd)}
+select:hover,select:focus,.dinput:hover,.dinput:focus{border-color:var(--y);box-shadow:0 0 0 3px var(--yd)}
+.dinput{color-scheme:dark}
+[data-theme="light"] .dinput{color-scheme:light}
 
 /* KPIs */
 .kg{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:11px;margin-bottom:11px}
@@ -266,18 +268,6 @@ select:hover,select:focus{border-color:var(--y);box-shadow:0 0 0 3px var(--yd)}
   border-top:1px solid var(--br);margin-top:10px;letter-spacing:.5px}
 .ftr span{color:var(--y);font-weight:700}
 
-/* COMPARATIVO TABELA */
-.comp-table{width:100%;border-collapse:collapse;font-size:12px}
-.comp-table th{text-align:left;font-weight:700;color:var(--tx3);font-size:9px;
-  text-transform:uppercase;letter-spacing:.7px;padding:9px 12px;
-  border-bottom:1px solid var(--br);background:var(--b2)}
-.comp-table td{padding:9px 12px;border-bottom:1px solid var(--br);color:var(--tx2);vertical-align:middle}
-.comp-table tbody tr:hover td{background:rgba(255,214,0,.03)}
-.comp-bar{display:flex;align-items:center;gap:6px}
-.comp-track{flex:1;height:6px;background:var(--b5);border-radius:3px;overflow:hidden;min-width:60px}
-.comp-fill{height:6px;border-radius:3px;transition:width 1s cubic-bezier(.4,0,.2,1)}
-.comp-pct{font-size:10px;font-weight:700;min-width:32px;text-align:right}
-
 /* LEGEND INLINE */
 .leg-inline{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
 .leg-row{display:flex;align-items:center;justify-content:space-between}
@@ -313,10 +303,10 @@ select:hover,select:focus{border-color:var(--y);box-shadow:0 0 0 3px var(--yd)}
 <!-- HEADER -->
 <div class="hdr">
   <div class="logo-wrap">
-    <img class="logo-img" src="data:image/png;base64,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" alt="Uniasselvi">
+    <img class="logo-img" src="data:image/png;base64,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" alt="Uniasselvi">
     <div>
       <div class="brand">Rede AC Centro de Ensino</div>
-      <div class="brand-sub">Acompanhamento de Rematricula Bonificada</div>
+      <div class="brand-sub">Acompanhamento de Rematricula</div>
     </div>
   </div>
   <div class="clock-c">
@@ -336,7 +326,7 @@ select:hover,select:focus{border-color:var(--y);box-shadow:0 0 0 3px var(--yd)}
 <div class="hero" id="hero-sec" style="display:none">
   <div class="hero-top">
     <div>
-      <div class="hero-title">Painel de Rematricula Bonificada</div>
+      <div class="hero-title">Painel de Rematricula</div>
       <div class="hero-sub" id="hero-sub">Monitoramento em tempo real</div>
     </div>
     <div class="hero-actions">
@@ -362,14 +352,38 @@ select:hover,select:focus{border-color:var(--y);box-shadow:0 0 0 3px var(--yd)}
     <option value="Winback">Winback</option>
   </select>
   <div class="divv"></div>
-  <span class="fl">Resposta</span>
-  <select id="f-resp" onchange="renderAll()">
+  <span class="fl">Matricula</span>
+  <select id="f-sitmat" onchange="renderAll()">
     <option value="TODOS">Todas</option>
-    <option value="Sim">Confirmaram</option>
-    <option value="Nao">Recusaram</option>
-    <option value="Nao respondido">Nao respondido</option>
-    <option value="Decidir depois">Decidir depois</option>
+    <option value="Confirmada">Confirmada</option>
+    <option value="Aguardando">Aguardando</option>
   </select>
+  <div class="divv"></div>
+  <span class="fl">Situacao</span>
+  <select id="f-sitaluno" onchange="renderAll()">
+    <option value="TODOS">Todas</option>
+    <option value="Cadastrado">Cadastrado</option>
+    <option value="Desistente">Desistente</option>
+  </select>
+  <div class="divv"></div>
+  <span class="fl">Inadimplencia</span>
+  <select id="f-inad" onchange="renderAll()">
+    <option value="TODOS">Todos</option>
+    <option value="Inadimplente">Inadimplentes</option>
+    <option value="Adimplente">Adimplentes</option>
+  </select>
+  <div class="divv"></div>
+  <span class="fl">Periodo</span>
+  <select id="f-periodo" onchange="onPeriodoChange()">
+    <option value="TODOS">Todo o periodo</option>
+    <option value="HOJE">Confirmaram hoje</option>
+    <option value="SEMANA">Confirmaram na semana</option>
+    <option value="MES">Confirmaram no mes</option>
+    <option value="PERSONALIZADO">Personalizado</option>
+  </select>
+  <input type="date" id="f-date-start" class="dinput" style="display:none" onchange="renderAll()">
+  <span class="fl" id="f-date-sep" style="display:none">ate</span>
+  <input type="date" id="f-date-end" class="dinput" style="display:none" onchange="renderAll()">
   <button class="btn btn-gh btn-sm" style="margin-left:auto" onclick="refreshData(event)">Atualizar</button>
 </div>
 
@@ -385,28 +399,28 @@ select:hover,select:focus{border-color:var(--y);box-shadow:0 0 0 3px var(--yd)}
   <div class="kg" id="kg1"></div>
   <div class="kg" id="kg2" style="margin-bottom:18px"></div>
 
-  <!-- RESPOSTA POR POLO -->
-  <div class="sh"><div class="st"><div class="st-dot"></div>Resposta por polo · situacao critica</div><div class="sl"></div></div>
+  <!-- SITUACAO POR POLO -->
+  <div class="sh"><div class="st"><div class="st-dot"></div>Situacao de matricula por polo</div><div class="sl"></div></div>
   <div class="cr2">
     <div class="card">
-      <button class="card-exp" onclick="expandChart('ch-polo','Resposta por polo','polo')">Expandir</button>
-      <div class="ct"><div class="ctd"></div>Confirmacoes vs recusas por polo</div>
+      <button class="card-exp" onclick="expandChart('ch-polo','Situacao de matricula por polo','polo')">Expandir</button>
+      <div class="ct"><div class="ctd"></div>Confirmada vs Aguardando vs Desistente por polo</div>
       <div style="position:relative;height:320px"><canvas id="ch-polo"></canvas></div>
     </div>
     <div class="card">
-      <button class="card-exp" onclick="expandChart('ch-resp','Distribuicao de respostas','resp')">Expandir</button>
-      <div class="ct"><div class="ctd"></div>Distribuicao geral de respostas</div>
-      <div class="leg-inline" id="resp-legend"></div>
-      <div style="position:relative;height:175px"><canvas id="ch-resp"></canvas></div>
+      <button class="card-exp" onclick="expandChart('ch-sit','Distribuicao de matricula','sit')">Expandir</button>
+      <div class="ct"><div class="ctd"></div>Distribuicao geral de matricula</div>
+      <div class="leg-inline" id="sit-legend"></div>
+      <div style="position:relative;height:175px"><canvas id="ch-sit"></canvas></div>
       <div class="gc" style="margin-top:8px">
         <div class="gv" id="taxa-conv">0%</div>
-        <div class="gl">confirmacoes (sim / total de alunos)</div>
+        <div class="gl">taxa de rematricula (confirmada / total)</div>
       </div>
     </div>
   </div>
 
-  <!-- TIPO DE ALUNO -->
-  <div class="sh"><div class="st"><div class="st-dot"></div>Analise por tipo de aluno</div><div class="sl"></div></div>
+  <!-- TIPO / INADIMPLENCIA / SITUACAO -->
+  <div class="sh"><div class="st"><div class="st-dot"></div>Perfil dos alunos</div><div class="sl"></div></div>
   <div class="cr3">
     <div class="card">
       <button class="card-exp" onclick="expandChart('ch-tipo','Distribuicao por tipo','tipo')">Expandir</button>
@@ -415,16 +429,16 @@ select:hover,select:focus{border-color:var(--y);box-shadow:0 0 0 3px var(--yd)}
       <div style="position:relative;height:175px"><canvas id="ch-tipo"></canvas></div>
     </div>
     <div class="card">
-      <button class="card-exp" onclick="expandChart('ch-calouro','Resposta dos Calouros','calouro')">Expandir</button>
-      <div class="ct"><div class="ctd"></div>Resposta · somente calouros</div>
-      <div class="leg-inline" id="calouro-legend"></div>
-      <div style="position:relative;height:175px"><canvas id="ch-calouro"></canvas></div>
+      <button class="card-exp" onclick="expandChart('ch-inad','Inadimplencia','inad')">Expandir</button>
+      <div class="ct"><div class="ctd"></div>Adimplentes · Inadimplentes</div>
+      <div class="leg-inline" id="inad-legend"></div>
+      <div style="position:relative;height:175px"><canvas id="ch-inad"></canvas></div>
     </div>
     <div class="card">
-      <button class="card-exp" onclick="expandChart('ch-vet','Resposta dos Veteranos','vet')">Expandir</button>
-      <div class="ct"><div class="ctd"></div>Resposta · somente veteranos</div>
-      <div class="leg-inline" id="vet-legend"></div>
-      <div style="position:relative;height:175px"><canvas id="ch-vet"></canvas></div>
+      <button class="card-exp" onclick="expandChart('ch-status','Situacao do aluno','status')">Expandir</button>
+      <div class="ct"><div class="ctd"></div>Cadastrado · Desistente</div>
+      <div class="leg-inline" id="status-legend"></div>
+      <div style="position:relative;height:175px"><canvas id="ch-status"></canvas></div>
     </div>
   </div>
 
@@ -512,6 +526,7 @@ function fetchData(){
     .catch(function(err){hideLoading();showToast('Erro ao carregar',err.message,'danger');});
 }
 function parseCSV(txt){
+  txt=txt.replace(/^\uFEFF/,'');
   var ln=txt.split('\n').filter(function(l){return l.trim();});
   if(ln.length<2)return[];
   var hd=slv(ln[0]);
@@ -532,34 +547,92 @@ function slv(line){
 }
 
 // NORMALIZAR
-function normResp(s){
+function normSit(s){
   var v=(s||'').trim();
-  if(v==='Sim')return'Sim';
-  if(v==='Nao'||v==='\u004e\u00e3o'||v==='NAO')return'Nao';
-  if(v.toLowerCase()==='decidir depois')return'Decidir depois';
-  return'Nao respondido';
+  if(v.indexOf('Confirmada')!==-1)return'Confirmada';
+  if(v.indexOf('Aguardando')!==-1)return'Aguardando';
+  return v?v:'Aguardando';
 }
-function dispResp(k){
-  var m={'Sim':'Sim','Nao':'Nao','Decidir depois':'Decidir depois','Nao respondido':'Nao respondido'};
-  return m[k]||k;
-}
-// NORMALIZAR STATUS DE PAGAMENTO (STATUS_RENOVAÇÃO -> PAGO / NAO PAGO / SEM INFO)
-function normPagamento(s){
+function normInad(s){
   var v=(s||'').trim().toLowerCase();
-  if(v==='renovado')return'PAGO';
-  if(v==='nao renovado'||v==='não renovado')return'NAO PAGO';
-  return'SEM INFO';
+  if(v==='sim')return'Inadimplente';
+  if(v==='nao'||v==='não')return'Adimplente';
+  return'Sem info';
+}
+function normSitAluno(s){
+  var v=(s||'').trim();
+  return v||'Sem info';
+}
+function normTipo(s){
+  var v=(s||'').trim();
+  return v||'Sem info';
+}
+function parseDataConf(s){
+  var v=(s||'').trim();
+  if(!v)return null;
+  var m=v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(!m)return null;
+  return new Date(parseInt(m[1],10),parseInt(m[2],10)-1,parseInt(m[3],10));
+}
+function fmtDateBR(d){
+  if(!d)return'';
+  return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear();
+}
+
+// JANELAS DE TEMPO
+function todayMid(){var n=new Date();n.setHours(0,0,0,0);return n;}
+function isHoje(d){if(!d)return false;return d.getTime()===todayMid().getTime();}
+function isSemana(d){
+  if(!d)return false;
+  var now=todayMid(),day=now.getDay(),monday=new Date(now);
+  monday.setDate(now.getDate()-((day+6)%7));
+  return d>=monday&&d<=now;
+}
+function isMes(d){
+  if(!d)return false;
+  var now=todayMid(),first=new Date(now.getFullYear(),now.getMonth(),1);
+  return d>=first&&d<=now;
+}
+function inPeriodo(d,periodo,ds,de){
+  if(!periodo||periodo==='TODOS')return true;
+  if(periodo==='HOJE')return isHoje(d);
+  if(periodo==='SEMANA')return isSemana(d);
+  if(periodo==='MES')return isMes(d);
+  if(periodo==='PERSONALIZADO'){
+    if(!d)return false;
+    if(!ds&&!de)return true;
+    if(ds&&d<new Date(ds+'T00:00:00'))return false;
+    if(de&&d>new Date(de+'T23:59:59'))return false;
+    return true;
+  }
+  return true;
 }
 
 // FILTROS
+function onPeriodoChange(){
+  var p=document.getElementById('f-periodo').value;
+  var show=p==='PERSONALIZADO';
+  document.getElementById('f-date-start').style.display=show?'inline-block':'none';
+  document.getElementById('f-date-end').style.display=show?'inline-block':'none';
+  document.getElementById('f-date-sep').style.display=show?'inline-block':'none';
+  renderAll();
+}
 function getFiltered(){
   var polo=document.getElementById('f-polo').value;
   var tipo=document.getElementById('f-tipo').value;
-  var resp=document.getElementById('f-resp').value;
+  var sitmat=document.getElementById('f-sitmat').value;
+  var sitaluno=document.getElementById('f-sitaluno').value;
+  var inad=document.getElementById('f-inad').value;
+  var periodo=document.getElementById('f-periodo').value;
+  var ds=document.getElementById('f-date-start').value;
+  var de=document.getElementById('f-date-end').value;
   return rawRows.filter(function(r){
     if(polo!=='TODOS'&&(r['NOME_POLO']||'').trim()!==polo)return false;
-    if(tipo!=='TODOS'&&(r['TIPO_ALUNO']||'').trim()!==tipo)return false;
-    if(resp!=='TODOS'&&normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])!==resp)return false;
+    if(tipo!=='TODOS'&&normTipo(r['TIPO_ALUNO'])!==tipo)return false;
+    if(sitmat!=='TODOS'&&normSit(r['SITUACAO_MATRICULA_ALUNO_SEMESTRE'])!==sitmat)return false;
+    if(sitaluno!=='TODOS'&&normSitAluno(r['SITUACAO_DO_ALUNO'])!==sitaluno)return false;
+    if(inad!=='TODOS'&&normInad(r['INADIMPLENTE'])!==inad)return false;
+    if(periodo!=='TODOS'&&!inPeriodo(parseDataConf(r['DATA_CONF_MATRICULA']),periodo,ds,de))return false;
     return true;
   });
 }
@@ -569,16 +642,17 @@ function processData(rows){
   var byPolo={};
   rows.forEach(function(r){
     var p=(r['NOME_POLO']||'').trim()||'Desconhecido';
-    if(!byPolo[p])byPolo[p]={polo:p,total:0,sim:0,nao:0,naoResp:0,decidir:0,calouros:0,veteranos:0,winback:0,calSim:0,calTotal:0,vetSim:0,vetTotal:0};
+    if(!byPolo[p])byPolo[p]={polo:p,total:0,confirmada:0,aguardando:0,desistente:0,cadastrado:0,inadimplente:0,adimplente:0,calouros:0,veteranos:0,winback:0};
     var d=byPolo[p];d.total++;
-    var resp=normResp(r['ACEITOU_REMATRICULA_BONIFICADA']);
-    if(resp==='Sim')d.sim++;
-    else if(resp==='Nao')d.nao++;
-    else if(resp==='Decidir depois')d.decidir++;
-    else d.naoResp++;
-    var tipo=(r['TIPO_ALUNO']||'').trim();
-    if(tipo==='Calouro'){d.calouros++;d.calTotal++;if(resp==='Sim')d.calSim++;}
-    else if(tipo==='Veterano'){d.veteranos++;d.vetTotal++;if(resp==='Sim')d.vetSim++;}
+    var sit=normSit(r['SITUACAO_MATRICULA_ALUNO_SEMESTRE']);
+    if(sit==='Confirmada')d.confirmada++;else d.aguardando++;
+    var sa=normSitAluno(r['SITUACAO_DO_ALUNO']);
+    if(sa==='Desistente')d.desistente++;else d.cadastrado++;
+    var inad=normInad(r['INADIMPLENTE']);
+    if(inad==='Inadimplente')d.inadimplente++;else if(inad==='Adimplente')d.adimplente++;
+    var tipo=normTipo(r['TIPO_ALUNO']);
+    if(tipo==='Calouro')d.calouros++;
+    else if(tipo==='Veterano')d.veteranos++;
     else if(tipo==='Winback')d.winback++;
   });
   return Object.values(byPolo).sort(function(a,b){return b.total-a.total;});
@@ -599,9 +673,9 @@ function finishLoad(){
   document.getElementById('filters').style.display='flex';
   showContent();renderAll();
   setTimeout(function(){
-    var sim=cnt(rawRows,function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Sim';});
-    var nao=cnt(rawRows,function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Nao';});
-    showToast('Dados carregados!',rawRows.length+' alunos · '+sim+' confirmaram · '+nao+' recusaram','success');
+    var conf=cnt(rawRows,function(r){return normSit(r['SITUACAO_MATRICULA_ALUNO_SEMESTRE'])==='Confirmada';});
+    var agu=cnt(rawRows,function(r){return normSit(r['SITUACAO_MATRICULA_ALUNO_SEMESTRE'])==='Aguardando';});
+    showToast('Dados carregados!',rawRows.length+' alunos · '+conf+' confirmados · '+agu+' aguardando','success');
   },600);
 }
 
@@ -609,43 +683,42 @@ function finishLoad(){
 function renderAll(){
   var rows=getFiltered(),data=processData(rows);
   renderHero(rows,data);renderKPIs(rows,data);
-  renderPoloChart(data);renderRespChart(rows);
-  renderDonutChart(rows,'',  'ch-tipo','tipo-legend','tipo');
-  renderDonutChart(rows,'Calouro','ch-calouro','calouro-legend','calouro');
-  renderDonutChart(rows,'Veterano','ch-vet','vet-legend','vet');
+  renderPoloChart(data);renderSitChart(rows);
+  renderDonutTipo(rows);renderDonutInad(rows);renderDonutStatus(rows);
   renderTable(data);
 }
 
 // HERO
 function renderHero(rows,data){
   var total=rows.length;
-  var sim=cnt(rows,function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Sim';});
-  var nao=cnt(rows,function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Nao';});
-  var nr=cnt(rows,function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Nao respondido';});
-  var pct=total>0?Math.round(sim/total*100):0;
+  var conf=cnt(rows,function(r){return normSit(r['SITUACAO_MATRICULA_ALUNO_SEMESTRE'])==='Confirmada';});
+  var agu=cnt(rows,function(r){return normSit(r['SITUACAO_MATRICULA_ALUNO_SEMESTRE'])==='Aguardando';});
+  var des=cnt(rows,function(r){return normSitAluno(r['SITUACAO_DO_ALUNO'])==='Desistente';});
+  var pct=total>0?Math.round(conf/total*100):0;
   document.getElementById('hero-sub').textContent='Monitoramento em tempo real · '+rawRows.length+' alunos na base · '+data.length+' polo'+(data.length!==1?'s':'');
   document.getElementById('hero-st').innerHTML=[
-    {v:total,l:'Alunos (filtro)'},{v:sim,l:'Confirmaram'},{v:nao,l:'Recusaram'},
-    {v:nr,l:'Sem resposta'},{v:pct+'%',l:'Taxa confirmacao'},{v:data.length,l:'Polos'}
+    {v:total,l:'Alunos (filtro)'},{v:conf,l:'Matricula confirmada'},{v:agu,l:'Aguardando matricula'},
+    {v:des,l:'Desistentes'},{v:pct+'%',l:'Taxa rematricula'},{v:data.length,l:'Polos'}
   ].map(function(s){return '<div class="hs"><div class="hs-v">'+s.v+'</div><div class="hs-l">'+s.l+'</div></div>';}).join('');
 }
 
 // KPIs
 function renderKPIs(rows,data){
   var total=rows.length;
-  var sim=cnt(rows,function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Sim';});
-  var nao=cnt(rows,function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Nao';});
-  var nr=cnt(rows,function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Nao respondido';});
-  var dec=cnt(rows,function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Decidir depois';});
-  var cal=cnt(rows,function(r){return (r['TIPO_ALUNO']||'').trim()==='Calouro';});
-  var vet=cnt(rows,function(r){return (r['TIPO_ALUNO']||'').trim()==='Veterano';});
-  var wb=cnt(rows,function(r){return (r['TIPO_ALUNO']||'').trim()==='Winback';});
-  var resp=sim+nao+dec;
-  var pctSim=total>0?Math.round(sim/total*100):0;
-  var pctNao=total>0?Math.round(nao/total*100):0;
-  var pctNR=total>0?Math.round(nr/total*100):0;
-  var pctDec=total>0?Math.round(dec/total*100):0;
-  var pctResp=total>0?Math.round(resp/total*100):0;
+  var conf=cnt(rows,function(r){return normSit(r['SITUACAO_MATRICULA_ALUNO_SEMESTRE'])==='Confirmada';});
+  var agu=cnt(rows,function(r){return normSit(r['SITUACAO_MATRICULA_ALUNO_SEMESTRE'])==='Aguardando';});
+  var des=cnt(rows,function(r){return normSitAluno(r['SITUACAO_DO_ALUNO'])==='Desistente';});
+  var inad=cnt(rows,function(r){return normInad(r['INADIMPLENTE'])==='Inadimplente';});
+  var cal=cnt(rows,function(r){return normTipo(r['TIPO_ALUNO'])==='Calouro';});
+  var vet=cnt(rows,function(r){return normTipo(r['TIPO_ALUNO'])==='Veterano';});
+  var wb=cnt(rows,function(r){return normTipo(r['TIPO_ALUNO'])==='Winback';});
+  var hoje=cnt(rows,function(r){return isHoje(parseDataConf(r['DATA_CONF_MATRICULA']));});
+  var semana=cnt(rows,function(r){return isSemana(parseDataConf(r['DATA_CONF_MATRICULA']));});
+  var mes=cnt(rows,function(r){return isMes(parseDataConf(r['DATA_CONF_MATRICULA']));});
+  var pctConf=total>0?Math.round(conf/total*100):0;
+  var pctAgu=total>0?Math.round(agu/total*100):0;
+  var pctDes=total>0?Math.round(des/total*100):0;
+  var pctInad=total>0?Math.round(inad/total*100):0;
 
   function mkKPI(k,i){
     return '<div class="kpi '+k.c+'" style="animation-delay:'+(i*0.05)+'s" data-mid="'+k.mid+'" data-ml="'+k.ml+'" data-col="'+k.col+'">'
@@ -658,21 +731,21 @@ function renderKPIs(rows,data){
   }
 
   document.getElementById('kg1').innerHTML=[
-    {l:'Total no filtro',v:total,s:'alunos selecionados',ic:'N',c:'kb',b:null,mid:'total',ml:'Total por polo',col:'#3b82f6'},
-    {l:'Confirmaram rematricula',v:sim,s:pctSim+'% do total filtrado',ic:'S',c:'kg2c',b:pctSim,mid:'sim',ml:'Confirmacoes por polo',col:'#22c55e'},
-    {l:'Recusaram rematricula',v:nao,s:pctNao+'% — risco de evasao',ic:'N',c:'kr',b:pctNao,mid:'nao',ml:'Recusas por polo',col:'#ef4444'},
-    {l:'Nao responderam',v:nr,s:pctNR+'% sem retorno',ic:'?',c:'ko',b:pctNR,mid:'naoResp',ml:'Sem resposta por polo',col:'#f97316'},
-    {l:'Decidir depois',v:dec,s:pctDec+'% aguardando',ic:'D',c:'kt',b:pctDec,mid:'decidir',ml:'Decidir depois por polo',col:'#06b6d4'},
-    {l:'Taxa de confirmacao',v:pctSim+'%',s:'sim / total de alunos ('+total+')',ic:'%',c:pctSim>=50?'kg2c':pctSim>=25?'ky':'kr',b:pctSim,mid:'conv',ml:'Taxa por polo',col:'#FFD600'},
+    {l:'Total no filtro',v:total,s:'alunos selecionados',c:'kb',b:null,mid:'total',ml:'Total por polo',col:'#3b82f6'},
+    {l:'Matricula confirmada',v:conf,s:pctConf+'% do total — ja estao ok',c:'kg2c',b:pctConf,mid:'confirmada',ml:'Confirmadas por polo',col:'#22c55e'},
+    {l:'Aguardando matricula',v:agu,s:pctAgu+'% — precisam de contato',c:'kr',b:pctAgu,mid:'aguardando',ml:'Aguardando por polo',col:'#ef4444'},
+    {l:'Desistentes',v:des,s:pctDes+'% desistiram',c:'ko',b:pctDes,mid:'desistente',ml:'Desistentes por polo',col:'#f97316'},
+    {l:'Inadimplentes',v:inad,s:pctInad+'% com pendencia financeira',c:'kr',b:pctInad,mid:'inadimplente',ml:'Inadimplentes por polo',col:'#ef4444'},
+    {l:'Taxa de rematricula',v:pctConf+'%',s:'confirmada / total ('+total+')',c:pctConf>=50?'kg2c':pctConf>=25?'ky':'kr',b:pctConf,mid:'confirmada',ml:'Taxa por polo',col:'#FFD600'},
   ].map(function(k,i){return mkKPI(k,i);}).join('');
 
   document.getElementById('kg2').innerHTML=[
-    {l:'Calouros',v:cal,s:total>0?Math.round(cal/total*100)+'% da selecao':'—',ic:'C',c:'kb',b:total>0?Math.round(cal/total*100):0,mid:'calouros',ml:'Calouros por polo',col:'#3b82f6'},
-    {l:'Veteranos',v:vet,s:total>0?Math.round(vet/total*100)+'% da selecao':'—',ic:'V',c:'ko',b:total>0?Math.round(vet/total*100):0,mid:'veteranos',ml:'Veteranos por polo',col:'#f97316'},
-    {l:'Winback',v:wb,s:'alunos que retornaram',ic:'W',c:'kt',b:null,mid:'winback',ml:'Winback por polo',col:'#06b6d4'},
-    {l:'Responderam',v:resp,s:pctResp+'% deram alguma resposta',ic:'R',c:'kg2c',b:pctResp,mid:'resp',ml:'Responderam por polo',col:'#22c55e'},
-    {l:'Criticos (Nao + S/resp)',v:nao+nr,s:total>0?Math.round((nao+nr)/total*100)+'% precisam de acao':'—',ic:'!',c:'kr',b:total>0?Math.round((nao+nr)/total*100):0,mid:'critico',ml:'Criticos por polo',col:'#ef4444'},
-    {l:'Polos monitorados',v:data.length,s:'com dados no filtro',ic:'P',c:'ky',b:null,mid:'polos',ml:'Polos monitorados',col:'#FFD600'},
+    {l:'Calouros',v:cal,s:total>0?Math.round(cal/total*100)+'% da selecao':'—',c:'kb',b:total>0?Math.round(cal/total*100):0,mid:'calouros',ml:'Calouros por polo',col:'#3b82f6'},
+    {l:'Veteranos',v:vet,s:total>0?Math.round(vet/total*100)+'% da selecao':'—',c:'ko',b:total>0?Math.round(vet/total*100):0,mid:'veteranos',ml:'Veteranos por polo',col:'#f97316'},
+    {l:'Winback',v:wb,s:'alunos que retornaram',c:'kt',b:null,mid:'winback',ml:'Winback por polo',col:'#06b6d4'},
+    {l:'Confirmaram hoje',v:hoje,s:'no filtro atual',c:'kg2c',b:null,mid:'hoje',ml:'Confirmaram hoje por polo',col:'#22c55e'},
+    {l:'Confirmaram na semana',v:semana,s:'desde segunda-feira',c:'kt',b:null,mid:'semana',ml:'Confirmaram na semana por polo',col:'#06b6d4'},
+    {l:'Confirmaram no mes',v:mes,s:'desde o dia 1',c:'ky',b:null,mid:'mes',ml:'Confirmaram no mes por polo',col:'#FFD600'},
   ].map(function(k,i){return mkKPI(k,i);}).join('');
 }
 
@@ -693,48 +766,55 @@ function openKpiModal(tipo,titulo,cor){
   var rows=getFiltered();
   var data=processData(rows);
 
-  // Construir linhas por polo
   var poloRows=[];
   data.forEach(function(d){
     if(!d.total)return;
     var val,maxV,sub='';
     if(tipo==='total'){val=d.total;maxV=Math.max.apply(null,data.map(function(x){return x.total;}));}
-    else if(tipo==='sim'){val=d.sim;maxV=Math.max.apply(null,data.map(function(x){return x.sim;}));sub=d.total>0?Math.round(d.sim/d.total*100)+'% do polo':'';}
-    else if(tipo==='nao'){val=d.nao;maxV=Math.max.apply(null,data.map(function(x){return x.nao;}));sub=d.total>0?Math.round(d.nao/d.total*100)+'% do polo':'';}
-    else if(tipo==='naoResp'){val=d.naoResp;maxV=Math.max.apply(null,data.map(function(x){return x.naoResp;}));sub=d.total>0?Math.round(d.naoResp/d.total*100)+'% do polo':'';}
-    else if(tipo==='decidir'){val=d.decidir;maxV=Math.max.apply(null,data.map(function(x){return x.decidir;}));sub=d.total>0?Math.round(d.decidir/d.total*100)+'% do polo':'';}
-    else if(tipo==='conv'){val=d.total>0?Math.round(d.sim/d.total*100):0;maxV=100;sub=d.sim+' de '+d.total+' confirmados';}
+    else if(tipo==='confirmada'){val=d.confirmada;maxV=Math.max.apply(null,data.map(function(x){return x.confirmada;}));sub=d.total>0?Math.round(d.confirmada/d.total*100)+'% do polo':'';}
+    else if(tipo==='aguardando'){val=d.aguardando;maxV=Math.max.apply(null,data.map(function(x){return x.aguardando;}));sub=d.total>0?Math.round(d.aguardando/d.total*100)+'% do polo':'';}
+    else if(tipo==='desistente'){val=d.desistente;maxV=Math.max.apply(null,data.map(function(x){return x.desistente;}));sub=d.total>0?Math.round(d.desistente/d.total*100)+'% do polo':'';}
+    else if(tipo==='inadimplente'){val=d.inadimplente;maxV=Math.max.apply(null,data.map(function(x){return x.inadimplente;}));sub=d.total>0?Math.round(d.inadimplente/d.total*100)+'% do polo':'';}
     else if(tipo==='calouros'){val=d.calouros;maxV=Math.max.apply(null,data.map(function(x){return x.calouros;}));}
     else if(tipo==='veteranos'){val=d.veteranos;maxV=Math.max.apply(null,data.map(function(x){return x.veteranos;}));}
     else if(tipo==='winback'){val=d.winback;maxV=Math.max.apply(null,data.map(function(x){return x.winback;}));}
-    else if(tipo==='resp'){val=d.sim+d.nao+d.decidir;maxV=d.total;sub=d.total>0?Math.round((d.sim+d.nao+d.decidir)/d.total*100)+'% do polo':'';}
-    else if(tipo==='critico'){val=d.nao+d.naoResp;maxV=Math.max.apply(null,data.map(function(x){return x.nao+x.naoResp;}));sub=d.total>0?Math.round((d.nao+d.naoResp)/d.total*100)+'% do polo':'';}
-    else if(tipo==='polos'){val=1;maxV=1;}
+    else if(tipo==='hoje'||tipo==='semana'||tipo==='mes'){
+      var poloRowsSrc=rows.filter(function(r){return (r['NOME_POLO']||'').trim()===d.polo;});
+      var fn=tipo==='hoje'?isHoje:(tipo==='semana'?isSemana:isMes);
+      val=cnt(poloRowsSrc,function(r){return fn(parseDataConf(r['DATA_CONF_MATRICULA']));});
+      maxV=1;// recompute below after loop
+    }
     else{val=0;maxV=1;}
-    var pct=maxV>0?Math.round(val/maxV*100):0;
-    poloRows.push({polo:d.polo,val:val,pct:pct,sub:sub});
+    poloRows.push({polo:d.polo,val:val,sub:sub});
   });
+  if(tipo==='hoje'||tipo==='semana'||tipo==='mes'){
+    var mx=Math.max.apply(null,poloRows.map(function(p){return p.val;}).concat([1]));
+    poloRows.forEach(function(p){p.pct=Math.round(p.val/mx*100);});
+  }else{
+    poloRows.forEach(function(p){
+      var mx=Math.max.apply(null,poloRows.map(function(x){return x.val;}).concat([1]));
+      p.pct=Math.round(p.val/mx*100);
+    });
+  }
   poloRows.sort(function(a,b){return b.val-a.val;});
 
   var rowHtml=poloRows.map(function(p){
-    var disp=tipo==='conv'?p.val+'%':p.val;
     return '<div class="mrow">'
       +'<div style="flex:1"><div class="mname">'+p.polo+'</div>'
       +(p.sub?'<div class="msub">'+p.sub+'</div>':'')
       +'<div class="mprog"><div class="mpb"><div class="mpf" style="width:'+p.pct+'%;background:'+cor+'"></div></div></div></div>'
-      +'<div class="mval" style="color:'+cor+'">'+disp+'</div>'
+      +'<div class="mval" style="color:'+cor+'">'+p.val+'</div>'
       +'</div>';
   }).join('');
 
   if(!rowHtml)rowHtml='<div style="padding:24px;text-align:center;color:var(--tx3);font-size:13px">Sem dados para exibir.</div>';
 
-  // Botao exportar
   var exportBtn='<div style="margin-bottom:14px">'
     +'<button onclick="exportFromModal(\''+tipo+'\')" style="width:100%;padding:10px 16px;background:'+cor+';color:'+(cor==='#FFD600'?'#000':'#fff')+';border:none;'
     +'border-radius:9px;font-size:13px;font-family:Inter,sans-serif;font-weight:700;'
     +'display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 2px 12px rgba(0,0,0,.15)">'
     +'Baixar planilha Excel (.xlsx)</button>'
-    +'<div style="font-size:10px;color:var(--tx3);text-align:center;margin-top:6px">Exporta com nome, matricula, curso, polo, tipo, resposta e status de pagamento — respeitando os filtros ativos</div>'
+    +'<div style="font-size:10px;color:var(--tx3);text-align:center;margin-top:6px">Exporta com nome, matricula, curso, polo, tipo, situacao, inadimplencia e telefone — respeitando os filtros ativos</div>'
     +'</div>';
 
   document.getElementById('mbody').innerHTML=exportBtn+rowHtml;
@@ -746,26 +826,30 @@ function openKpiModal(tipo,titulo,cor){
 function exportFromModal(tipo){
   var rows=getFiltered();
   var map={
-    sim:function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Sim';},
-    nao:function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Nao';},
-    naoResp:function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Nao respondido';},
-    decidir:function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Decidir depois';},
-    calouros:function(r){return (r['TIPO_ALUNO']||'').trim()==='Calouro';},
-    veteranos:function(r){return (r['TIPO_ALUNO']||'').trim()==='Veterano';},
-    winback:function(r){return (r['TIPO_ALUNO']||'').trim()==='Winback';},
-    critico:function(r){var rp=normResp(r['ACEITOU_REMATRICULA_BONIFICADA']);return rp==='Nao'||rp==='Nao respondido';},
-    resp:function(r){var rp=normResp(r['ACEITOU_REMATRICULA_BONIFICADA']);return rp==='Sim'||rp==='Nao'||rp==='Decidir depois';},
+    confirmada:function(r){return normSit(r['SITUACAO_MATRICULA_ALUNO_SEMESTRE'])==='Confirmada';},
+    aguardando:function(r){return normSit(r['SITUACAO_MATRICULA_ALUNO_SEMESTRE'])==='Aguardando';},
+    desistente:function(r){return normSitAluno(r['SITUACAO_DO_ALUNO'])==='Desistente';},
+    inadimplente:function(r){return normInad(r['INADIMPLENTE'])==='Inadimplente';},
+    calouros:function(r){return normTipo(r['TIPO_ALUNO'])==='Calouro';},
+    veteranos:function(r){return normTipo(r['TIPO_ALUNO'])==='Veterano';},
+    winback:function(r){return normTipo(r['TIPO_ALUNO'])==='Winback';},
+    hoje:function(r){return isHoje(parseDataConf(r['DATA_CONF_MATRICULA']));},
+    semana:function(r){return isSemana(parseDataConf(r['DATA_CONF_MATRICULA']));},
+    mes:function(r){return isMes(parseDataConf(r['DATA_CONF_MATRICULA']));},
   };
   var target=map[tipo]?rows.filter(map[tipo]):rows;
   if(!target.length){showToast('Sem dados','Nenhum aluno nesta categoria.','warning');return;}
   var now=new Date();
-  var headers=['No','Nome','Matricula','Curso','Polo','Tipo','Resposta','Status Pagamento','Telefone','E-mail'];
-  var dr=target.map(function(r,i){return[i+1,r['ALUNO']||'',r['MATRICULA']||'',r['CURSO_NOME']||'',r['NOME_POLO']||'',r['TIPO_ALUNO']||'',dispResp(normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])),normPagamento(r['STATUS_RENOVAÇÃO']),r['TELEFONE_ALUNO']||'',r['EMAIL_ALUNO']||''];});
+  var headers=['No','Nome','Matricula','Curso','Polo','Tipo','Situacao Matricula','Inadimplente','Situacao Aluno','Data Confirmacao','Telefone','E-mail'];
+  var dr=target.map(function(r,i){
+    var dc=parseDataConf(r['DATA_CONF_MATRICULA']);
+    return[i+1,r['NOME_ALUNO']||'',r['COD_ALUNO']||'',r['NOME_CURSO']||'',r['NOME_POLO']||'',normTipo(r['TIPO_ALUNO']),normSit(r['SITUACAO_MATRICULA_ALUNO_SEMESTRE']),normInad(r['INADIMPLENTE']),normSitAluno(r['SITUACAO_DO_ALUNO']),fmtDateBR(dc),r['CELULAR_ALUNO']||'',r['EMAIL_ALUNO']||''];
+  });
   var wb=XLSX.utils.book_new();
   var sd=[['RELATORIO DE REMATRICULA — '+tipo.toUpperCase()],['Gerado em: '+now.toLocaleDateString('pt-BR')+' as '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'   |   Total: '+target.length],[],headers].concat(dr);
   var ws=XLSX.utils.aoa_to_sheet(sd);
-  ws['!cols']=[{wch:4},{wch:36},{wch:12},{wch:28},{wch:28},{wch:12},{wch:16},{wch:16},{wch:18},{wch:34}];
-  ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:9}},{s:{r:1,c:0},e:{r:1,c:9}}];
+  ws['!cols']=[{wch:4},{wch:36},{wch:12},{wch:28},{wch:28},{wch:12},{wch:18},{wch:14},{wch:16},{wch:14},{wch:18},{wch:34}];
+  ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:11}},{s:{r:1,c:0},e:{r:1,c:11}}];
   XLSX.utils.book_append_sheet(wb,ws,'Relatorio');
   XLSX.writeFile(wb,'rematricula_'+tipo+'_'+Date.now()+'.xlsx');
   showToast('Planilha exportada!',target.length+' aluno'+(target.length!==1?'s':'')+' · .xlsx gerado','success');
@@ -777,11 +861,10 @@ function TC(){return isDark?'#3e4250':'#9ca3af';}
 function GC(){return isDark?'rgba(255,255,255,.04)':'rgba(0,0,0,.06)';}
 function BC(){return isDark?'#111318':'#ffffff';}
 
-// CHART: POLO (barras verticais agrupadas)
+// CHART: POLO
 function renderPoloChart(data){
   var f=data.filter(function(d){return d.total>0;});
   var labels=f.map(function(d){
-    // Encurtar labels para caber no eixo X
     return d.polo.replace('Rio Branco/AC - ','RB/AC - ').replace('Porto Velho/RO - Distrito de Extrema','PVH - Extrema').replace('São Miguel do Guaporé/RO','S. Miguel/RO');
   });
   if(charts.polo)charts.polo.destroy();
@@ -790,10 +873,9 @@ function renderPoloChart(data){
     data:{
       labels:labels,
       datasets:[
-        {label:'Sim',data:f.map(function(d){return d.sim;}),backgroundColor:'#22c55ecc',borderColor:'#22c55e',borderWidth:1,borderRadius:4,maxBarThickness:22},
-        {label:'Nao',data:f.map(function(d){return d.nao;}),backgroundColor:'#ef4444cc',borderColor:'#ef4444',borderWidth:1,borderRadius:4,maxBarThickness:22},
-        {label:'Decidir depois',data:f.map(function(d){return d.decidir;}),backgroundColor:'#06b6d4cc',borderColor:'#06b6d4',borderWidth:1,borderRadius:4,maxBarThickness:22},
-        {label:'Sem resposta',data:f.map(function(d){return d.naoResp;}),backgroundColor:'rgba(62,66,80,.55)',borderColor:'#4b5060',borderWidth:1,borderRadius:4,maxBarThickness:22},
+        {label:'Confirmada',data:f.map(function(d){return d.confirmada;}),backgroundColor:'#22c55ecc',borderColor:'#22c55e',borderWidth:1,borderRadius:4,maxBarThickness:22},
+        {label:'Aguardando',data:f.map(function(d){return d.aguardando;}),backgroundColor:'#ef4444cc',borderColor:'#ef4444',borderWidth:1,borderRadius:4,maxBarThickness:22},
+        {label:'Desistente',data:f.map(function(d){return d.desistente;}),backgroundColor:'rgba(249,115,22,.65)',borderColor:'#f97316',borderWidth:1,borderRadius:4,maxBarThickness:22},
       ]
     },
     options:{
@@ -810,37 +892,54 @@ function renderPoloChart(data){
   });
 }
 
-// CHART: DONUT GENERICO com legenda inline
-function buildDonutData(rows,tipo){
-  var f=tipo?rows.filter(function(r){return (r['TIPO_ALUNO']||'').trim()===tipo;}):rows;
-  var sim=cnt(f,function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Sim';});
-  var nao=cnt(f,function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Nao';});
-  var dec=cnt(f,function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Decidir depois';});
-  var nr=cnt(f,function(r){return normResp(r['ACEITOU_REMATRICULA_BONIFICADA'])==='Nao respondido';});
-  return{total:f.length,vals:[sim,nao,dec,nr],lbls:['Sim','Nao','Decidir depois','Sem resposta'],clrs:['#22c55e','#ef4444','#06b6d4','#3e4250']};
+// CHART: DONUTS
+function buildSitData(rows){
+  var conf=cnt(rows,function(r){return normSit(r['SITUACAO_MATRICULA_ALUNO_SEMESTRE'])==='Confirmada';});
+  var agu=cnt(rows,function(r){return normSit(r['SITUACAO_MATRICULA_ALUNO_SEMESTRE'])==='Aguardando';});
+  return{total:rows.length,vals:[conf,agu],lbls:['Confirmada','Aguardando'],clrs:['#22c55e','#ef4444']};
+}
+function buildTipoData(rows){
+  var c=cnt(rows,function(r){return normTipo(r['TIPO_ALUNO'])==='Calouro';});
+  var v=cnt(rows,function(r){return normTipo(r['TIPO_ALUNO'])==='Veterano';});
+  var w=cnt(rows,function(r){return normTipo(r['TIPO_ALUNO'])==='Winback';});
+  return{total:rows.length,vals:[c,v,w],lbls:['Calouro','Veterano','Winback'],clrs:['#FFD600','#e879f9','#22d3ee']};
+}
+function buildInadData(rows){
+  var i=cnt(rows,function(r){return normInad(r['INADIMPLENTE'])==='Inadimplente';});
+  var a=cnt(rows,function(r){return normInad(r['INADIMPLENTE'])==='Adimplente';});
+  return{total:rows.length,vals:[a,i],lbls:['Adimplente','Inadimplente'],clrs:['#22c55e','#ef4444']};
+}
+function buildStatusData(rows){
+  var c=cnt(rows,function(r){return normSitAluno(r['SITUACAO_DO_ALUNO'])==='Cadastrado';});
+  var d=cnt(rows,function(r){return normSitAluno(r['SITUACAO_DO_ALUNO'])==='Desistente';});
+  return{total:rows.length,vals:[c,d],lbls:['Cadastrado','Desistente'],clrs:['#22c55e','#f97316']};
 }
 
-function renderRespChart(rows){
-  var dd=buildDonutData(rows,'');
+function renderSitChart(rows){
+  var dd=buildSitData(rows);
   var pct=dd.total>0?Math.round(dd.vals[0]/dd.total*100):0;
   document.getElementById('taxa-conv').textContent=pct+'%';
-  renderLegend('resp-legend',dd,rows.length);
-  if(charts.resp)charts.resp.destroy();
-  charts.resp=new Chart(document.getElementById('ch-resp'),mkDonut(dd));
+  renderLegend('sit-legend',dd,rows.length);
+  if(charts.sit)charts.sit.destroy();
+  charts.sit=new Chart(document.getElementById('ch-sit'),mkDonut(dd));
 }
-
-function renderDonutChart(rows,tipo,canvasId,legendId,key){
-  var dd=tipo===''&&key==='tipo'?buildTipoData(rows):buildDonutData(rows,tipo);
-  renderLegend(legendId,dd,dd.total);
-  if(charts[key])charts[key].destroy();
-  charts[key]=new Chart(document.getElementById(canvasId),mkDonut(dd));
+function renderDonutTipo(rows){
+  var dd=buildTipoData(rows);
+  renderLegend('tipo-legend',dd,dd.total);
+  if(charts.tipo)charts.tipo.destroy();
+  charts.tipo=new Chart(document.getElementById('ch-tipo'),mkDonut(dd));
 }
-
-function buildTipoData(rows){
-  var c=cnt(rows,function(r){return (r['TIPO_ALUNO']||'').trim()==='Calouro';});
-  var v=cnt(rows,function(r){return (r['TIPO_ALUNO']||'').trim()==='Veterano';});
-  var w=cnt(rows,function(r){return (r['TIPO_ALUNO']||'').trim()==='Winback';});
-  return{total:rows.length,vals:[c,v,w],lbls:['Calouro','Veterano','Winback'],clrs:['#FFD600','#e879f9','#22d3ee']};
+function renderDonutInad(rows){
+  var dd=buildInadData(rows);
+  renderLegend('inad-legend',dd,dd.total);
+  if(charts.inad)charts.inad.destroy();
+  charts.inad=new Chart(document.getElementById('ch-inad'),mkDonut(dd));
+}
+function renderDonutStatus(rows){
+  var dd=buildStatusData(rows);
+  renderLegend('status-legend',dd,dd.total);
+  if(charts.status)charts.status.destroy();
+  charts.status=new Chart(document.getElementById('ch-status'),mkDonut(dd));
 }
 
 function renderLegend(id,dd,tot){
@@ -862,91 +961,46 @@ function mkDonut(dd){
       plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){var tot=ctx.dataset.data.reduce(function(a,b){return a+b;},0);return ctx.label+': '+ctx.raw+' ('+( tot>0?Math.round(ctx.raw/tot*100):0)+'%)';}},backgroundColor:TO().backgroundColor,borderColor:TO().borderColor,borderWidth:1,titleColor:TO().titleColor,bodyColor:TO().bodyColor,padding:11,cornerRadius:9}}}};
 }
 
-// COMPARATIVO CALOURO VS VETERANO POR POLO
-function renderCompTable(data){
-  var relevant=data.filter(function(d){return d.total>0;});
-  var rows=relevant.map(function(d){
-    var pCal=d.calTotal>0?Math.round(d.calSim/d.calTotal*100):0;
-    var pVet=d.vetTotal>0?Math.round(d.vetSim/d.vetTotal*100):0;
-    var diff=pCal-pVet;
-    var diffColor=diff>0?'var(--g)':diff<0?'var(--r)':'var(--tx3)';
-    var diffStr=diff>0?'+'+diff+'%':diff+'%';
-    return '<tr>'
-      +'<td style="font-weight:700;color:var(--tx)">'+d.polo+'</td>'
-      +'<td style="text-align:center">'+d.total+'</td>'
-      +'<td>'
-        +'<div class="comp-bar">'
-          +'<div class="comp-track"><div class="comp-fill" style="width:'+pCal+'%;background:#3b82f6"></div></div>'
-          +'<div class="comp-pct" style="color:#3b82f6">'+pCal+'%</div>'
-        +'</div>'
-        +'<div style="font-size:9px;color:var(--tx3);margin-top:2px">'+d.calSim+'/'+d.calTotal+' calouros</div>'
-      +'</td>'
-      +'<td>'
-        +'<div class="comp-bar">'
-          +'<div class="comp-track"><div class="comp-fill" style="width:'+pVet+'%;background:#a855f7"></div></div>'
-          +'<div class="comp-pct" style="color:#a855f7">'+pVet+'%</div>'
-        +'</div>'
-        +'<div style="font-size:9px;color:var(--tx3);margin-top:2px">'+d.vetSim+'/'+d.vetTotal+' veteranos</div>'
-      +'</td>'
-      +'<td style="text-align:center;font-weight:700;color:'+diffColor+'">'+diffStr+'</td>'
-      +'</tr>';
-  }).join('');
-  document.getElementById('comp-table').innerHTML=
-    '<thead><tr>'
-    +'<th>Polo</th>'
-    +'<th style="text-align:center">Total</th>'
-    +'<th>Calouros · % confirmacao</th>'
-    +'<th>Veteranos · % confirmacao</th>'
-    +'<th style="text-align:center">Diferenca</th>'
-    +'</tr></thead><tbody>'+rows+'</tbody>';
-}
-
 // TABELA POLO
 function renderTable(data){
-  var M=['1o','2o','3o'];
   var sorted=[].concat(data).sort(function(a,b){
-    return (b.total>0?b.sim/b.total:0)-(a.total>0?a.sim/a.total:0);
+    return (b.total>0?b.confirmada/b.total:0)-(a.total>0?a.confirmada/a.total:0);
   });
   var rows=sorted.map(function(d,i){
-    var pSim=d.total>0?Math.round(d.sim/d.total*100):0;
+    var pConf=d.total>0?Math.round(d.confirmada/d.total*100):0;
     var medal=i<3&&d.total>0?'<span style="font-size:14px">'+['🥇','🥈','🥉'][i]+'</span>':'<span style="color:var(--tx3);font-size:10px">'+(i+1)+'</span>';
-    var critRatio=(d.nao+d.naoResp)/Math.max(d.total,1);
-    var crit=critRatio>0.7?'crit-r':critRatio>0.4?'crit-o':'crit-g';
-    var critLabel=critRatio>0.7?'Critico':critRatio>0.4?'Atencao':'Bom';
+    var critRatio=d.aguardando/Math.max(d.total,1);
+    var crit=critRatio>0.6?'crit-r':critRatio>0.3?'crit-o':'crit-g';
+    var critLabel=critRatio>0.6?'Critico':critRatio>0.3?'Atencao':'Bom';
     return '<tr>'
       +'<td style="padding-left:18px;width:44px">'+medal+'</td>'
       +'<td><span style="font-weight:700;color:var(--tx);font-size:12.5px">'+d.polo+'</span><span class="crit '+crit+'" style="margin-left:6px">'+critLabel+'</span></td>'
       +'<td style="text-align:center">'+d.total+'</td>'
-      +'<td style="text-align:center"><span class="pill pil-g">'+d.sim+'</span></td>'
-      +'<td style="text-align:center"><span class="pill pil-r">'+d.nao+'</span></td>'
-      +'<td style="text-align:center"><span class="pill pil-o">'+d.decidir+'</span></td>'
-      +'<td style="text-align:center"><span class="pill pil-x">'+d.naoResp+'</span></td>'
-      +'<td style="text-align:center">'+d.calouros+'</td>'
-      +'<td style="text-align:center">'+d.veteranos+'</td>'
+      +'<td style="text-align:center"><span class="pill pil-g">'+d.confirmada+'</span></td>'
+      +'<td style="text-align:center"><span class="pill pil-r">'+d.aguardando+'</span></td>'
+      +'<td style="text-align:center"><span class="pill pil-o">'+d.desistente+'</span></td>'
+      +'<td style="text-align:center"><span class="pill pil-x">'+d.inadimplente+'</span></td>'
       +'<td style="padding-right:16px;min-width:130px">'
-        +'<div class="pbar"><div class="pbar-t"><div class="pbar-f" style="width:'+Math.min(pSim,100)+'%;background:#22c55e"></div></div>'
-        +'<div class="pbar-p" style="color:#22c55e">'+pSim+'%</div></div>'
+        +'<div class="pbar"><div class="pbar-t"><div class="pbar-f" style="width:'+Math.min(pConf,100)+'%;background:#22c55e"></div></div>'
+        +'<div class="pbar-p" style="color:#22c55e">'+pConf+'%</div></div>'
       +'</td></tr>';
   }).join('');
-  var tT=sumR(data,'total'),tS=sumR(data,'sim'),tN=sumR(data,'nao'),tD=sumR(data,'decidir'),tNR=sumR(data,'naoResp');
-  var tC=sumR(data,'calouros'),tV=sumR(data,'veteranos');
-  var tPct=tT>0?Math.round(tS/tT*100):0;
+  var tT=sumR(data,'total'),tC=sumR(data,'confirmada'),tA=sumR(data,'aguardando'),tD=sumR(data,'desistente'),tI=sumR(data,'inadimplente');
+  var tPct=tT>0?Math.round(tC/tT*100):0;
   document.getElementById('polo-table').innerHTML=
     '<thead><tr>'
     +'<th style="padding-left:18px">#</th><th>Polo</th>'
-    +'<th style="text-align:center">Total</th><th style="text-align:center">Sim</th>'
-    +'<th style="text-align:center">Nao</th><th style="text-align:center">Decidir</th>'
-    +'<th style="text-align:center">S/ resp.</th>'
-    +'<th style="text-align:center">Calouros</th><th style="text-align:center">Veteranos</th>'
-    +'<th style="padding-right:16px">% Confirmacao</th>'
+    +'<th style="text-align:center">Total</th><th style="text-align:center">Confirmada</th>'
+    +'<th style="text-align:center">Aguardando</th><th style="text-align:center">Desistentes</th>'
+    +'<th style="text-align:center">Inadimplentes</th>'
+    +'<th style="padding-right:16px">% Rematricula</th>'
     +'</tr></thead>'
     +'<tbody>'+rows
     +'<tr class="tr-tot">'
     +'<td style="padding-left:18px">—</td><td><strong>TOTAL FILTRADO</strong></td>'
-    +'<td style="text-align:center">'+tT+'</td><td style="text-align:center">'+tS+'</td>'
-    +'<td style="text-align:center">'+tN+'</td><td style="text-align:center">'+tD+'</td>'
-    +'<td style="text-align:center">'+tNR+'</td>'
-    +'<td style="text-align:center">'+tC+'</td><td style="text-align:center">'+tV+'</td>'
+    +'<td style="text-align:center">'+tT+'</td><td style="text-align:center">'+tC+'</td>'
+    +'<td style="text-align:center">'+tA+'</td><td style="text-align:center">'+tD+'</td>'
+    +'<td style="text-align:center">'+tI+'</td>'
     +'<td style="padding-right:16px"><div class="pbar"><div class="pbar-t"><div class="pbar-f" style="width:'+Math.min(tPct,100)+'%;background:var(--y)"></div></div>'
     +'<div class="pbar-p" style="color:var(--y)">'+tPct+'%</div></div></td>'
     +'</tr></tbody>';
@@ -962,10 +1016,10 @@ function expandChart(canvasId,titulo,key){
   if(window._mc){window._mc.destroy();window._mc=null;}
   var rows=getFiltered(),data=processData(rows);
   if(key==='polo')window._mc=new Chart(nc,buildPoloExpand(data));
-  else if(key==='resp')window._mc=new Chart(nc,mkDonut(buildDonutData(rows,'')));
+  else if(key==='sit')window._mc=new Chart(nc,mkDonut(buildSitData(rows)));
   else if(key==='tipo')window._mc=new Chart(nc,mkDonut(buildTipoData(rows)));
-  else if(key==='calouro')window._mc=new Chart(nc,mkDonut(buildDonutData(rows,'Calouro')));
-  else if(key==='vet')window._mc=new Chart(nc,mkDonut(buildDonutData(rows,'Veterano')));
+  else if(key==='inad')window._mc=new Chart(nc,mkDonut(buildInadData(rows)));
+  else if(key==='status')window._mc=new Chart(nc,mkDonut(buildStatusData(rows)));
   document.getElementById('modal').style.display='flex';
 }
 function buildPoloExpand(data){
@@ -975,10 +1029,9 @@ function buildPoloExpand(data){
   });
   return{type:'bar',data:{labels:labels,
     datasets:[
-      {label:'Sim',data:f.map(function(d){return d.sim;}),backgroundColor:'#22c55ecc',borderColor:'#22c55e',borderWidth:1,borderRadius:5,maxBarThickness:28},
-      {label:'Nao',data:f.map(function(d){return d.nao;}),backgroundColor:'#ef4444cc',borderColor:'#ef4444',borderWidth:1,borderRadius:5,maxBarThickness:28},
-      {label:'Decidir depois',data:f.map(function(d){return d.decidir;}),backgroundColor:'#06b6d4cc',borderColor:'#06b6d4',borderWidth:1,borderRadius:5,maxBarThickness:28},
-      {label:'Sem resposta',data:f.map(function(d){return d.naoResp;}),backgroundColor:'rgba(62,66,80,.55)',borderColor:'#4b5060',borderWidth:1,borderRadius:5,maxBarThickness:28},
+      {label:'Confirmada',data:f.map(function(d){return d.confirmada;}),backgroundColor:'#22c55ecc',borderColor:'#22c55e',borderWidth:1,borderRadius:5,maxBarThickness:28},
+      {label:'Aguardando',data:f.map(function(d){return d.aguardando;}),backgroundColor:'#ef4444cc',borderColor:'#ef4444',borderWidth:1,borderRadius:5,maxBarThickness:28},
+      {label:'Desistente',data:f.map(function(d){return d.desistente;}),backgroundColor:'rgba(249,115,22,.65)',borderColor:'#f97316',borderWidth:1,borderRadius:5,maxBarThickness:28},
     ]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:true,position:'bottom',labels:{color:TC(),font:{family:'Inter',size:12},boxWidth:12,padding:14}},tooltip:TO()},
